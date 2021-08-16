@@ -44,7 +44,7 @@ public interface ListenerManager extends Listener {
 	 * Begin listening for packets for all currently online players.
 	 * This method only needs to be called once by the plugin owning this {@link ListenerManager} instance.
 	 *
-	 * @param plugin the plugin, used to register a task
+	 * @param plugin the plugin, used to register a task and an event handler
 	 */
 	void listen(Plugin plugin);
 }

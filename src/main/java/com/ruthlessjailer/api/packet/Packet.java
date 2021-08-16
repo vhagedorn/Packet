@@ -6,7 +6,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 /**
  * @author RuthlessJailer
  */
-public class Packet extends JavaPlugin {
+public final class Packet extends JavaPlugin {
 
 	private static Packet badDesignPatterns;
 

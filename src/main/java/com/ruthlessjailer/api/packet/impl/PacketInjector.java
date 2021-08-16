@@ -23,7 +23,7 @@ import java.util.function.BiFunction;
 /**
  * @author RuthlessJailer
  */
-public class PacketInjector implements ListenerManager {
+public final class PacketInjector implements ListenerManager {
 
 	private static final String PIPELINE = "PacketInjector";
 	private final Set<ListenerWrapper<?>> listeners = new HashSet<>();
@@ -56,11 +56,8 @@ public class PacketInjector implements ListenerManager {
 
 	@Override
 	public void listen(Plugin plugin){
-		try {
-			Bukkit.getOnlinePlayers().forEach(this::inject);
-		} catch (IllegalArgumentException e){
-			Bukkit.getScheduler().runTask(plugin, () -> Bukkit.getOnlinePlayers().forEach(this::inject));
-		}
+		Bukkit.getScheduler().runTask(plugin, () -> Bukkit.getOnlinePlayers().forEach(this::inject));
+		Bukkit.getPluginManager().registerEvents(this, plugin);
 	}
 
 	@EventHandler
