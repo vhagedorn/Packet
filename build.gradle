@@ -1,0 +1,53 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+    id 'com.github.johnrengelman.shadow' version '7.0.0'
+}
+
+group 'com.ruthlessjailer.api.packet'
+version '1.0.0'
+
+def name = project.name + '.jar'
+def main = group + '.Packet'
+def java = '16'
+
+project.buildDir project.projectDir.path + '/target'
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    compileOnly 'gg.airplane:airplane-api:1.17.1-R0.1-SNAPSHOT'
+    compileOnly 'gg.airplane:airplane:1.17.1-R0.1-SNAPSHOT:mojang-mapped'
+}
+
+shadowJar {
+    archiveFileName.set(name)
+    destinationDirectory.set(project.buildDir)
+    mergeServiceFiles()
+    minimize()
+    manifest {
+        attributes('Main-Class': main)
+    }
+}
+
+build {
+    dependsOn(shadowJar)
+}
+
+processResources {
+    expand('version': project.version, 'name': project.name, 'main': main)
+}
+
+sourceCompatibility = java
+targetCompatibility = java
+
+compileJava {
+}
+
+jar {
+    destinationDirectory.set(project.buildDir)
+    archiveFileName.set(project.name + '-' + project.version + '-unshaded.jar')
+}
