@@ -15,14 +15,14 @@ import org.jetbrains.annotations.Nullable;
  *
  * <pre><code>
  * // create a ListenerManager
- * final {@link ListenerManager} listenerManager = new {@link com.ruthlessjailer.plugin.boatmechanics.packet.impl.PacketInjector PacketInjector}();
+ * final {@link ListenerManager} listenerManager = new {@link com.ruthlessjailer.api.packet.impl.PacketInjector}();
  *
  * // convenience register method
  * {@link ListenerManager#register(Class, java.util.function.BiFunction) listenerManager.register}(SpecialPacket.class, (player, packet) -> {
  *
  * 		// returning `packet` will passively monitor
  * 		// 	all incoming or outgoing SpecialPackets
- *		// returning null will "cancel" the "event",
+ *		// returning `null` will "cancel" the "event",
  *		//	preventing it from going to the server
  *		//	or client as this listener takes priority
  *		//	over the server's packet handler
