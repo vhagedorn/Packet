@@ -11,6 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -25,8 +26,8 @@ import java.util.function.BiFunction;
  */
 public final class PacketInjector implements ListenerManager {
 
-	private static final String PIPELINE = "PacketInjector";
-	private final Set<ListenerWrapper<?>> listeners = new HashSet<>();
+	private static final String                  PIPELINE  = "PacketInjector";
+	private final        Set<ListenerWrapper<?>> listeners = new HashSet<>();
 
 	@Override
 	public <P extends Packet<?>> PacketListener<P> register(final Class<P> clazz, final BiFunction<Player, P, P> mutator) {
@@ -55,30 +56,36 @@ public final class PacketInjector implements ListenerManager {
 	public <P extends Packet<?>> boolean unregister(final PacketListener<P> listener) { return listeners.remove(new ListenerWrapper<>(listener)); }
 
 	@Override
-	public void listen(Plugin plugin){
+	public void listen(Plugin plugin) {
 		Bukkit.getScheduler().runTask(plugin, () -> Bukkit.getOnlinePlayers().forEach(this::inject));
 		Bukkit.getPluginManager().registerEvents(this, plugin);
 	}
 
+	@Override
+	public void drop(final Plugin plugin) {
+		Bukkit.getScheduler().runTask(plugin, () -> Bukkit.getOnlinePlayers().forEach(this::extract));
+		HandlerList.unregisterAll(this);
+	}
+
 	@EventHandler
-	private void onJoin(final PlayerJoinEvent event){
+	private void onJoin(final PlayerJoinEvent event) {
 		final Player player = event.getPlayer();
 
 		inject(player);
 	}
 
-	private void inject(final Player player){
+	private void inject(final Player player) {
 		final Channel channel = ((CraftPlayer) player).getHandle().networkManager.channel;
 
 		PacketInterceptor interceptor = (PacketInterceptor) channel.pipeline().get(PIPELINE);
 
-		if(interceptor == null){
+		if (interceptor == null) {
 			interceptor = new PacketInterceptor(player);
 			channel.pipeline().addBefore("packet_handler", PIPELINE, interceptor);
 		}
 	}
 
-	private void extract(final Player player){
+	private void extract(final Player player) {
 		final Channel channel = ((CraftPlayer) player).getHandle().networkManager.channel;
 
 		channel.eventLoop().execute(() -> channel.pipeline().remove(PIPELINE));
@@ -96,14 +103,14 @@ public final class PacketInjector implements ListenerManager {
 		public void write(final ChannelHandlerContext ctx, Object msg, final ChannelPromise promise) throws Exception {
 			for (final ListenerWrapper<?> listener : listeners) { msg = listener.mutate(player, msg); }
 
-			if(msg != null) super.write(ctx, msg, promise);
+			if (msg != null) { super.write(ctx, msg, promise); }
 		}
 
 		@Override
 		public void channelRead(final ChannelHandlerContext ctx, Object msg) throws Exception {
 			for (final ListenerWrapper<?> listener : listeners) { msg = listener.mutate(player, msg); }
 
-			if(msg != null) super.channelRead(ctx, msg);
+			if (msg != null) { super.channelRead(ctx, msg); }
 		}
 	}
 
@@ -111,20 +118,20 @@ public final class PacketInjector implements ListenerManager {
 
 		final PacketListener<P> listener;
 
-		ListenerWrapper(final PacketListener<P> listener){
+		ListenerWrapper(final PacketListener<P> listener) {
 			this.listener = listener;
 		}
 
 		Object mutate(final Player player, final Object msg) {
-			if(msg != null && listener.getType().isAssignableFrom(msg.getClass())){
+			if (msg != null && listener.getType().isAssignableFrom(msg.getClass())) {
 				return listener.mutate(player, (P) msg);
-			}else{
+			} else {
 				return msg;
 			}
 		}
 
 		@Override
-		public int hashCode(){
+		public int hashCode() {
 			return listener.hashCode();
 		}
 

@@ -7,31 +7,31 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Interface representing a class that can mutate incoming or outgoing packets of type {@link P}.<p>
- *
- * It is recommended to use the {@link ListenerManager#register(Class, java.util.function.BiFunction) convenience register method}, but implementing
- * this class and then using the {@link ListenerManager#register(PacketListener) standard register method} is also a viable option.<p>
- *
+ * <p>
+ * It is recommended to use the {@link com.ruthlessjailer.api.packet.ListenerManager#register(Class, java.util.function.BiFunction) convenience register method}, but implementing
+ * this class and then using the {@link com.ruthlessjailer.api.packet.ListenerManager#register(PacketListener) standard register method} is also a viable option.<p>
+ * <p>
  * Example usage:
  *
  * <pre><code>
  * // create a ListenerManager
- * final {@link ListenerManager} listenerManager = new {@link com.ruthlessjailer.api.packet.impl.PacketInjector}();
+ * final {@link com.ruthlessjailer.api.packet.ListenerManager ListenerManager} listenerManager = new {@link  com.ruthlessjailer.api.packet.impl.PacketInjector PacketInjector}();
  *
  * // convenience register method
- * {@link ListenerManager#register(Class, java.util.function.BiFunction) listenerManager.register}(SpecialPacket.class, (player, packet) -> {
+ * {@link com.ruthlessjailer.api.packet.ListenerManager#register(Class, java.util.function.BiFunction) listenerManager.register}(SpecialPacket.class, (player, packet) -> {
  *
  * 		// returning `packet` will passively monitor
  * 		// 	all incoming or outgoing SpecialPackets
- *		// returning `null` will "cancel" the "event",
- *		//	preventing it from going to the server
- *		//	or client as this listener takes priority
- *		//	over the server's packet handler
+ * 		// returning `null` will "cancel" the "event",
+ * 		//	preventing it from going to the server
+ * 		//	or client as this listener takes priority
+ * 		//	over the server's packet handler
  *
- *		return packet;
+ * 		return packet;
  * }
  *
  * // standard register method
- * {@link ListenerManager#register(PacketListener) listenerManager.register}(new SpecialPacketListener());
+ * {@link com.ruthlessjailer.api.packet.ListenerManager#register(PacketListener) listenerManager.register}(new SpecialPacketListener());
  * </code></pre>
  *
  * @author RuthlessJailer

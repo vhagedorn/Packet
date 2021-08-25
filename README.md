@@ -2,18 +2,82 @@
 
 A simple netty packet listener framework.
 
-For those of you who are mentally impaired: this requires NMS. It's way faster than using some garbage API like ProtocolLib, which uses reflection.
+## Cerebral dysfunction
 
-### Example usage:
+For those of you who are mentally impaired: **this requires NMS**.
+It's way faster than using some garbage API like ProtocolLib, which uses reflection.
+
+If your pea brain has not comprehended the above message, or simply refuses to for unknown reasons:
+have fun watching your TPS tank as you painstakingly waste days of your life supporting years-dated server versions all in one plugin!1!!<sup>1</sup>
+
+<sup>1</sup>*If you disagree with the fact that 1.8 is dead then please leave immediately and use 
+[TinyProtocol](https://github.com/dmulloy2/ProtocolLib/tree/master/TinyProtocol) or even (God have mercy) 
+[ProtocolLib](https://github.com/dmulloy2/ProtocolLib).* 
+
+## Example usage
+
+Main:
 
 ```java
+/**
+ * @author RuthlessJailer
+ */
 public class ListenerPlugin extends JavaPlugin {
+	private static ListenerPlugin badDesignPatterns;
+
+	public final ListenerManager listenerManager = new PacketInjector();
+
 	@Override
 	public void onEnable() {
-		// obtain a ListenerManager
-		final ListenerManager listenerManager = Packet.singletonCringe().listenerManager;
+		badDesignPatterns = this;
+		listenerManager.listen(this); // begin listening
+		
+		// ~~standard~~ boring register method
+		listenerManager.register(new SpecialPacketListener());
+	}
 
-		// convenience register method
+	@Override
+	public void onDisable() {
+		listenerManager.drop(this); // stop listening
+	}
+
+	public static ListenerPlugin singletonCringe() { return badDesignPatterns; }
+}
+```
+
+Listener:
+
+```java
+/**
+ * @author RuthlessJailer
+ */
+public final class SpecialPacketListener implements PacketListener<SpecialPacket> {
+	
+	// Long, boring way of doing it -_-
+
+	@Override
+	public @NotNull
+	Class<SpecialPacket> getType() {
+		return SpecialPacket.class;
+	}
+
+	@Override
+	public @Nullable
+	SpecialPacket mutate(final Player player, final SpecialPacket packet) {
+		if (player.getName() == "RuthlessJailer") { // very cool
+			return packet;
+		} else { // pleb
+			return null;
+		}
+	}
+	
+	// Lazy way to do it 😎
+	// (this can be literally anywhere so long as the plugin has loaded)
+
+	static { // ✨ static blocks ✨
+		ListenerManager listenerManager = ListenerPlugin.singletonCringe().listenerManager;
+
+		// ~~convenience~~ chad register method
 		listenerManager.register(SpecialPacket.class, (player, packet) -> {
 
 			// returning `packet` will passively monitor all incoming or outgoing SpecialPackets
@@ -21,9 +85,7 @@ public class ListenerPlugin extends JavaPlugin {
 
 			return packet;
 		});
-
-		// standard register method
-		listenerManager.register(new SpecialPacketListener());
 	}
+
 }
 ```
