@@ -5,10 +5,7 @@ A simple netty packet listener framework.
 ## Cerebral dysfunction
 
 For those of you who are mentally impaired: **this requires NMS**.
-It's way faster than using some garbage API like ProtocolLib, which uses reflection.
-
-If your pea brain has not comprehended the above message, or simply refuses to for unknown reasons:
-have fun watching your TPS tank as you painstakingly waste days of your life supporting years-dated server versions all in one plugin!1!!<sup>1</sup>
+It's way faster than using some garbage API like ProtocolLib, which uses reflection.<sup>1</sup>
 
 <sup>1</sup>*If you disagree with the fact that 1.8 is dead then please leave immediately and use
 [TinyProtocol](https://github.com/dmulloy2/ProtocolLib/tree/master/TinyProtocol) or even (God have mercy)
