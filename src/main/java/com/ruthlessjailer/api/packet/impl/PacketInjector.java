@@ -63,7 +63,7 @@ public final class PacketInjector implements ListenerManager {
 
 	@Override
 	public void drop(final Plugin plugin) {
-		Bukkit.getScheduler().runTask(plugin, () -> Bukkit.getOnlinePlayers().forEach(this::extract));
+		Bukkit.getOnlinePlayers().forEach(this::extract);
 		HandlerList.unregisterAll(this);
 	}
 
