@@ -75,7 +75,7 @@ Main:
 
 ```java
 /**
- * @author RuthlessJailer
+ * @author vadim
  */
 public class ListenerPlugin extends JavaPlugin {
 	private static ListenerPlugin badDesignPatterns;
@@ -104,7 +104,7 @@ Listener:
 
 ```java
 /**
- * @author RuthlessJailer
+ * @author vadim
  */
 public final class SpecialPacketListener implements PacketListener<SpecialPacket> {
 
